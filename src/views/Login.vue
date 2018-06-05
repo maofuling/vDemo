@@ -1,17 +1,17 @@
 <template>
   <div class="login">
      
-    <el-form ref="form" :model="form" class="container">
+    <el-form ref="form" :model="form" class="container" :rules='rules'>
         <el-form-item>
             <div class="avatar">
                 <img src="../assets/avatar.jpg" alt="">
             </div>
         </el-form-item>
-        <el-form-item>
+        <el-form-item prop='name'>
             <el-input v-model="form.name" placeholder='账号' prefix-icon="iconfont icon-account"></el-input>
         </el-form-item>
-        <el-form-item>
-            <el-input v-model="form.name" placeholder='密码' prefix-icon="iconfont icon-password"></el-input>
+        <el-form-item prop='password'>
+            <el-input v-model="form.password" placeholder='密码' prefix-icon="iconfont icon-password"></el-input>
         </el-form-item>
         <el-form-item>
              <el-button type="primary" class="login-btn">登录</el-button>
@@ -26,6 +26,14 @@ export default {
             form: {
                 name: '',
                 password:''
+            },
+            rules:{
+                name:[
+                    { required: true, message: '请输入用户名', trigger: 'blur' },
+                ],
+                password:[
+                    { required: true, message: '请输入密码', trigger: 'blur' }
+                ]
             }
         };
     }
