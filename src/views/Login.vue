@@ -7,40 +7,64 @@
                 <img src="../assets/avatar.jpg" alt="">
             </div>
         </el-form-item>
-        <el-form-item prop='name'>
-            <el-input v-model="form.name" placeholder='账号' prefix-icon="iconfont icon-account"></el-input>
+        <el-form-item prop='username'>
+            <el-input v-model="form.username" placeholder='账号' prefix-icon="iconfont icon-account"></el-input>
         </el-form-item>
         <el-form-item prop='password'>
-            <el-input v-model="form.password" placeholder='密码' prefix-icon="iconfont icon-password"></el-input>
+            <el-input v-model="form.password" placeholder='密码' prefix-icon="iconfont icon-password" type='password'></el-input>
         </el-form-item>
         <el-form-item>
-             <el-button type="primary" class="login-btn">登录</el-button>
+             <el-button type="primary" class="login-btn" @click="loginSubmit('form')">登录</el-button>
         </el-form-item>
     </el-form>
   </div>
 </template>
 <script>
+import { checkUser } from '../../api/index'
+
+
 export default {
     data() {
         return {
             form: {
-                name: '',
-                password:''
+                username: '',
+                password: ''
             },
-            rules:{
-                name:[
+            rules: {
+                name: [
                     { required: true, message: '请输入用户名', trigger: 'blur' },
                 ],
-                password:[
+                password: [
                     { required: true, message: '请输入密码', trigger: 'blur' }
                 ]
             }
         };
+    },
+    methods: {
+        loginSubmit: function (formName) {
+            this.$refs[formName].validate((valid) => {
+                if (valid) {
+                    checkUser(this.form).then(res => {
+                        if (res.meta.status === 200) {
+                            this.$router.push({name:'Home'})
+                        }
+                        else {
+                            this.$message({
+                                message: res.meta.msg,
+                                type: 'error'
+                            });
+                        }
+                    }
+                    )
+                } else {
+                    alert('验证不通过!');
+                }
+            });
+        }
     }
 }
 </script>
 <style lang="scss" scoped>
-
 .login {
   position: fixed;
   width: 100%;
@@ -73,5 +97,4 @@ export default {
     }
   }
 }
-
 </style>
