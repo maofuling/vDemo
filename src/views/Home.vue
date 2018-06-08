@@ -14,7 +14,7 @@ export default {
     };
   },
   mounted () {
-      console.log(123)
+
       var params = {params:{query:'',pagenum:1,pagesize:1}}
       userList(params).then(res=>{
           console.log(res)
