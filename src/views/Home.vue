@@ -1,11 +1,11 @@
 <template>
   <div class="home">
     <el-container>
-      <el-aside width="200px">
+      <el-aside width="auto">
         <div class="logo"></div>
         <!-- 侧边栏 -->
         <el-menu default-active="1" class="el-menu-admin" @open="handleOpen" @close="handleClose" background-color="#545c64"
-          text-color="#fff" active-text-color="#ffd04b">
+          text-color="#fff" active-text-color="#ffd04b" :collapse="isCollapse">
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location"></i>
@@ -18,27 +18,36 @@
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
-
         </el-menu>
-
       </el-aside>
+
       <el-container>
-        <el-header>Header</el-header>
-        <el-main>Main</el-main>
+        <!-- header部分 -->
+        <el-header>
+          <i class="myicon myicon-menu toggle-btn" @click="toggleshow"></i>
+          <div class="system-title">电商后台管理系统</div>
+          <div>
+            <span class="welcome">
+              您好,xxx
+            </span>
+            <el-button type='text' @click="exit">退出</el-button>
+          </div>
+        </el-header>
+        <el-main>
+          <router-view></router-view>
+        </el-main>
       </el-container>
     </el-container>
 
   </div>
 </template>
 <script>
-import {
-  userList
-} from '../../api/index.js'
+import { userList} from '../../api/index.js'
 
 export default {
   data() {
     return {
-
+        isCollapse: true   
     };
   },
   methods: {
@@ -47,6 +56,15 @@ export default {
     },
     handleClose(key, keyPath) {
       console.log(key, keyPath);
+    },
+    //隐藏显示侧边栏
+    toggleshow(){
+      this.isCollapse = !this.isCollapse
+    },
+    //退出登录
+    exit(){
+      localStorage.removeItem('mytoken');
+      this.$router.push({name:'/login'})
     }
   },
   mounted() {
@@ -96,7 +114,7 @@ export default {
     margin-left: -20px;
     font-size: 36px;
     line-height: 60px;
-    color: white;
+    color: #989898;
     cursor: pointer;
     &:hover {
       background-color: #00635a;

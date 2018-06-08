@@ -26,5 +26,5 @@ export const checkUser = params =>{
 
 
 export const userList = params =>{
-    return axios.get('roles',params).then(res => res.data);
+    return axios.get('users',params).then(res => res.data);
 }
