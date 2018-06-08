@@ -1,7 +1,27 @@
 <template>
   <div class="home">
     <el-container>
-      <el-aside width="200px">Aside</el-aside>
+      <el-aside width="200px">
+        <div class="logo"></div>
+        <!-- 侧边栏 -->
+        <el-menu default-active="1" class="el-menu-admin" @open="handleOpen" @close="handleClose" background-color="#545c64"
+          text-color="#fff" active-text-color="#ffd04b">
+          <el-submenu index="1">
+            <template slot="title">
+              <i class="el-icon-location"></i>
+              <span>用户管理</span>
+            </template>
+            <el-menu-item-group>
+              <el-menu-item index="1">
+                <i class="el-icon-menu"></i>
+                <span slot="title">用户列表</span>
+              </el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+
+        </el-menu>
+
+      </el-aside>
       <el-container>
         <el-header>Header</el-header>
         <el-main>Main</el-main>
@@ -11,37 +31,44 @@
   </div>
 </template>
 <script>
-  import {
-    userList
-  } from '../../api/index.js'
+import {
+  userList
+} from '../../api/index.js'
 
-  export default {
-    data() {
-      return {
+export default {
+  data() {
+    return {
 
-      };
+    };
+  },
+  methods: {
+    handleOpen(key, keyPath) {
+      console.log(key, keyPath);
     },
-    mounted() {
-
-      var params = {
-        params: {
-          query: '',
-          pagenum: 1,
-          pagesize: 1
-        }
-      }
-      userList(params).then(res => {
-        console.log(res)
-      })
+    handleClose(key, keyPath) {
+      console.log(key, keyPath);
     }
+  },
+  mounted() {
+
+    var params = {
+      params: {
+        query: '',
+        pagenum: 1,
+        pagesize: 1
+      }
+    }
+    userList(params).then(res => {
+      console.log(res)
+    })
   }
+}
 </script>
 
 <style lang="scss" scoped>
-
 .home {
   height: 100%;
-  background-color: #E5E5E5;
+  background-color: #e5e5e5;
   .el-menu-admin:not(.el-menu--collapse) {
     width: 200px;
     min-height: 400px;
@@ -59,10 +86,10 @@
     background-color: #545c64;
   }
   .logo {
-    height:60px;
+    height: 60px;
     background: url(../assets/logo.png);
     background-size: cover;
-    background-color: white;
+    background-color: #545c64;
   }
   .toggle-btn {
     padding: 0 10px;
@@ -79,7 +106,7 @@
     font-size: 28px;
     color: white;
   }
-  .welcome, {
+  .welcome {
     color: white;
   }
 }
