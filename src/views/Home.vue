@@ -28,7 +28,7 @@
           <div class="system-title">电商后台管理系统</div>
           <div>
             <span class="welcome">
-              您好,xxx
+              您好,{{$store.getters.username}}
             </span>
             <el-button type='text' @click="exit">退出</el-button>
           </div>
@@ -47,7 +47,8 @@ import { userList} from '../../api/index.js'
 export default {
   data() {
     return {
-        isCollapse: true   
+        isCollapse: true,
+       
     };
   },
   methods: {
@@ -66,6 +67,9 @@ export default {
       localStorage.removeItem('mytoken');
       this.$router.push({name:'/login'})
     }
+  },
+  computed:{
+  
   },
   mounted() {
 

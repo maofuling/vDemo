@@ -48,6 +48,7 @@ export default {
                         if (res.meta.status === 200) {
                             localStorage.setItem('mytoken',res.data.token)
                             this.$router.push({name:'Home'})
+                            this.$store.commit('setUsername',res.data.username)
                         }
                         else {
                             this.$message({
