@@ -61,10 +61,10 @@
       @size-change="handleSizeChange"
        @current-change="handleCurrentChange" 
        :current-page="1" 
-       :page-sizes="[100, 200, 300, 400]" 
+       :page-sizes="[1, 2, 3, 4]" 
        :page-size="100" 
        layout="total, sizes, prev, pager, next, jumper"
-        :total="400">
+        :total="total">
       </el-pagination>
     </div>
 
@@ -78,14 +78,18 @@ export default {
   methods: {
     handleSizeChange(val) {
       console.log(`每页 ${val} 条`);
+      this.pagesize = val;
+      this.initList();
     },
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
+      this.pagenum = val;
+       this.initList();
     },
     initList() {
-      userList({ params: { query: this.query, pagenum: 1, pagesize: 3 } }).then(res => {
+      userList({ params: { query: this.query, pagenum: this.pagenum, pagesize: this.pagesize } }).then(res => {
         this.userData = res.data.users;
-
+        this.total = res.data.total;
       })
     }
   },
@@ -93,7 +97,10 @@ export default {
     return {
       userData: [],
       value3: '',
-      query:''
+      query:'',
+      total:0,
+      pagesize:1,
+      pagenum:1
     };
   },
   mounted() {
