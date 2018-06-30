@@ -14,9 +14,9 @@
 
     <el-row>
       <el-col :span="24">
-        <el-input placeholder="请输入内容" class="search-input">
+        <el-input placeholder="请输入内容" class="search-input" v-model="query" @keydown.native.enter="initList">
         </el-input>
-        <el-button type="success" plain>添加用户</el-button>
+        <el-button type="success" plain @click="initList">添加用户</el-button>
       </el-col>
     </el-row>
 
@@ -52,44 +52,7 @@
       </el-table-column>
     </el-table>
 
-     <!-- <el-table
-    :data="tableData"
-    border
-    style="width: 100%">
-      <el-table-column
-        type="index"
-        width="50">
-      </el-table-column>
-    <el-table-column
-      prop="date"
-      label="日期"
-      width="180">
-    </el-table-column>
-    <el-table-column
-      prop="name"
-      label="姓名"
-      width="180">
-    </el-table-column>
-    <el-table-column
-      prop="address"
-      label="地址">
-    </el-table-column>
-
-     <el-table-column label="用户状态">
-        <template slot-scope="scope">
-          <el-switch v-model="value3"></el-switch>
-        </template>
-      </el-table-column>
-
-      <el-table-column label="操作">
-        <template slot-scope="scope">
-          <el-button size="mini" icon="el-icon-edit" plain type="primary"></el-button>
-          <el-button size="mini" icon="el-icon-delete" plain type="danger"></el-button>
-          <el-button size="mini" icon="el-icon-check" plain type="warning"></el-button>
-        </template>
-      </el-table-column>
-
-  </el-table> -->
+   
 
 
 
@@ -120,7 +83,7 @@ export default {
       console.log(`当前页: ${val}`);
     },
     initList() {
-      userList({ params: { query: '', pagenum: 1, pagesize: 3 } }).then(res => {
+      userList({ params: { query: this.query, pagenum: 1, pagesize: 3 } }).then(res => {
         this.userData = res.data.users;
 
       })
@@ -129,7 +92,8 @@ export default {
   data() {
     return {
       userData: [],
-      value3: ''
+      value3: '',
+      query:''
     };
   },
   mounted() {

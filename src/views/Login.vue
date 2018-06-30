@@ -11,7 +11,7 @@
             <el-input v-model="form.username" placeholder='账号' prefix-icon="iconfont icon-account"></el-input>
         </el-form-item>
         <el-form-item prop='password'>
-            <el-input v-model="form.password" placeholder='密码' prefix-icon="iconfont icon-password" type='password'></el-input>
+            <el-input v-model="form.password" placeholder='密码' prefix-icon="iconfont icon-password" type='password' @keydown.native.enter="loginSubmit('form')"></el-input>
         </el-form-item>
         <el-form-item>
              <el-button type="primary" class="login-btn" @click="loginSubmit('form')">登录</el-button>
