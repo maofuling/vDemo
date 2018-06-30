@@ -21,14 +21,8 @@
     </el-row>
 
     <!-- 表格 -->
-    <el-table
-     :data="userData" 
-      class="margin-20"
-     border 
-     style="width: 100%">
-      <el-table-column
-        type="index"
-        width="50">
+    <el-table :data="userData" class="margin-20" border style="width: 100%">
+      <el-table-column type="index" width="50">
       </el-table-column>
       <el-table-column prop="username" label="姓名" width="180">
       </el-table-column>
@@ -39,7 +33,7 @@
 
       <el-table-column label="用户状态">
         <template slot-scope="scope">
-          <el-switch v-model="value3"></el-switch>
+          <el-switch v-model="scope.row.mg_state" @change="changeState(scope.row)"></el-switch>
         </template>
       </el-table-column>
 
@@ -52,19 +46,8 @@
       </el-table-column>
     </el-table>
 
-   
-
-
-
     <div class="page">
-      <el-pagination 
-      @size-change="handleSizeChange"
-       @current-change="handleCurrentChange" 
-       :current-page="1" 
-       :page-sizes="[1, 2, 3, 4]" 
-       :page-size="100" 
-       layout="total, sizes, prev, pager, next, jumper"
-        :total="total">
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="1" :page-sizes="[1, 2, 3, 4]" :page-size="100" layout="total, sizes, prev, pager, next, jumper" :total="total">
       </el-pagination>
     </div>
 
@@ -72,24 +55,40 @@
 </template>
 
 <script>
-import { userList } from '../../../api/index.js'
+import { userList, userState } from '../../../api/index.js'
 
 export default {
   methods: {
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
+      // console.log(`每页 ${val} 条`);
       this.pagesize = val;
       this.initList();
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
+      // console.log(`当前页: ${val}`);
       this.pagenum = val;
-       this.initList();
+      this.initList();
     },
     initList() {
       userList({ params: { query: this.query, pagenum: this.pagenum, pagesize: this.pagesize } }).then(res => {
         this.userData = res.data.users;
         this.total = res.data.total;
+      })
+    },
+    changeState(row) {
+      userState({ uid: row.id, type: row.mg_state }).then(res => {
+        if (res.meta.status === 200) {
+          this.$message({
+            showClose: true,
+            message: res.meta.msg,
+            type: 'success'
+          })
+        } else {
+          this.$message({
+            message: res.meta.msg,
+            type: 'warning'
+          })
+        }
       })
     }
   },
@@ -97,14 +96,13 @@ export default {
     return {
       userData: [],
       value3: '',
-      query:'',
-      total:0,
-      pagesize:1,
-      pagenum:1
+      query: '',
+      total: 0,
+      pagesize: 1,
+      pagenum: 1
     };
   },
   mounted() {
-
     //初始化列表
     this.initList();
   }
@@ -125,7 +123,6 @@ export default {
     margin: 20px 0;
   }
 }
-
 </style>
 
 

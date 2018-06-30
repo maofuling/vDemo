@@ -19,12 +19,17 @@ axios.interceptors.request.use(function (config) {
   });
 
 
-
+//登录
 export const checkUser = params =>{
     return axios.post('login',params).then(res => res.data);
 }
 
-
+//用户列表
 export const userList = params =>{
     return axios.get('users',params).then(res => res.data);
+}
+
+//用户状态
+export const userState = params =>{
+    return axios.put(`users/${params.uid}/state/${params.type}`).then(res => res.data);
 }
