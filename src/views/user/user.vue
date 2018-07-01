@@ -15,8 +15,10 @@
     <el-row>
       <el-col :span="24">
         <el-input placeholder="请输入内容" class="search-input" v-model="query" @keydown.native.enter="initList">
+          <el-button slot="append" icon="el-icon-search" @click="initList"></el-button>
         </el-input>
-        <el-button type="success" plain @click="initList">添加用户</el-button>
+
+        <el-button type="success" plain @click="adduserDlgVisible=true">添加用户</el-button>
       </el-col>
     </el-row>
 
@@ -47,15 +49,37 @@
     </el-table>
 
     <div class="page">
-      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="1" :page-sizes="[1, 2, 3, 4]" :page-size="100" layout="total, sizes, prev, pager, next, jumper" :total="total">
+      <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="1" :page-sizes="[1, 2, 3, 4, 5]" :page-size="pagesize" layout="total, sizes, prev, pager, next, jumper" :total="total">
       </el-pagination>
     </div>
+
+    <!-- 添加用户对话框 -->
+    <el-dialog title="添加用户" :visible.sync="adduserDlgVisible">
+      <el-form :model="userInfo" :rules="rules" ref="userRuleForm">
+        <el-form-item label="用户名:" label-width="80px" prop='username'>
+          <el-input v-model="userInfo.username" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="密码:" label-width="80px" prop='password'>
+          <el-input v-model="userInfo.password" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱:" label-width="80px" prop='email'>
+          <el-input v-model="userInfo.email" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="电话:" label-width="80px" prop='mobile'>
+          <el-input v-model="userInfo.mobile" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitForm('userRuleForm')">确 定</el-button>
+      </div>
+    </el-dialog>
 
   </div>
 </template>
 
 <script>
-import { userList, userState } from '../../../api/index.js'
+import { userList, userState, addUser } from '../../../api/index.js'
 
 export default {
   methods: {
@@ -90,6 +114,26 @@ export default {
           })
         }
       })
+    },
+    submitForm(userRuleForm) {
+      this.$refs[userRuleForm].validate(valid => {
+        if (valid) {
+
+          addUser(this.userInfo).then(res => {
+            if (res.meta.status === 201) {
+              this.$message({
+                showClose: true,
+                message: '创建用户成功',
+                type: 'success'
+              })
+              this.adduserDlgVisible = false;
+              this.initList();
+            }
+
+          })
+        } 
+      });
+
     }
   },
   data() {
@@ -98,8 +142,31 @@ export default {
       value3: '',
       query: '',
       total: 0,
-      pagesize: 1,
-      pagenum: 1
+      pagesize: 5,
+      pagenum: 1,
+      adduserDlgVisible: false,
+      userInfo: {
+        username: '',
+        password: '',
+        email: '',
+        mobile: ''
+      },
+      rules: {
+        username: [
+          { required: true, message: '请输入用户名', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' }
+        ],
+        email: [
+          { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+          { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur,change' }
+        ],
+        mobile: [
+          { required: true, message: '电话不能为空' }
+        ]
+      }
+
     };
   },
   mounted() {
