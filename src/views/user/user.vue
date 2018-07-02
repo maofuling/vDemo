@@ -41,7 +41,7 @@
 
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button size="mini" icon="el-icon-edit" plain type="primary"></el-button>
+          <el-button size="mini" icon="el-icon-edit" plain type="primary" @click="openeditdlg(scope.row)"></el-button>
           <el-button size="mini" icon="el-icon-delete" plain type="danger"></el-button>
           <el-button size="mini" icon="el-icon-check" plain type="warning"></el-button>
         </template>
@@ -75,11 +75,30 @@
       </div>
     </el-dialog>
 
+    <!-- 编辑用户对话框 -->
+    <el-dialog title="编辑用户" :visible.sync="edituserDlgVisible">
+      <el-form :model="edituserInfo" :rules="rules" ref="editForm">
+        <el-form-item label="用户名:" label-width="80px" prop='username'>
+          <el-input v-model="edituserInfo.username" auto-complete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="邮箱:" label-width="80px" prop='email'>
+          <el-input v-model="edituserInfo.email" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="电话:" label-width="80px" prop='mobile'>
+          <el-input v-model="edituserInfo.mobile" auto-complete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="submitEditUser('editForm')">确 定</el-button>
+      </div>
+    </el-dialog>
+
   </div>
 </template>
 
 <script>
-import { userList, userState, addUser } from '../../../api/index.js'
+import { userList, userState, addUser, editUser, miteditUser } from '../../../api/index.js'
 
 export default {
   methods: {
@@ -131,9 +150,42 @@ export default {
             }
 
           })
-        } 
+        }
       });
 
+    },
+
+    openeditdlg(row) {
+      this.edituserDlgVisible = true;
+      editUser(row.id).then(res => {
+        this.edituserInfo.username = res.data.username;
+        this.edituserInfo.email = res.data.email;
+        this.edituserInfo.mobile = res.data.mobile;
+        this.edituserInfo.id = res.data.id;
+
+      })
+    },
+
+    //提交编辑表单
+    submitEditUser(editForm) {
+      this.$refs[editForm].validate(valide => {
+        if (valide) {
+          miteditUser(this.edituserInfo).then(res => {
+            console.log(res)
+            if (res.meta.status === 200) {
+              this.$message({
+                showClose: true,
+                message: res.meta.msg,
+                type: 'success'
+              });
+              this.edituserDlgVisible = false;
+              this.initList();
+
+            }
+          })
+
+        }
+      })
     }
   },
   data() {
@@ -145,11 +197,18 @@ export default {
       pagesize: 5,
       pagenum: 1,
       adduserDlgVisible: false,
+      edituserDlgVisible: false,
       userInfo: {
         username: '',
         password: '',
         email: '',
         mobile: ''
+      },
+      edituserInfo: {
+        username: '',
+        email: '',
+        mobile: '',
+        id: ''
       },
       rules: {
         username: [

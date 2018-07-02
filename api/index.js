@@ -39,3 +39,14 @@ export const userState = params =>{
 export const addUser = params =>{
     return axios.post('users',params).then(res => res.data);
 }
+
+//编辑用户
+export const editUser = params =>{
+    return axios.get(`users/${params}`).then(res => res.data);
+}
+
+
+//编辑用户提交
+export const miteditUser = params =>{
+    return axios.put(`users/${params.id}`,params).then(res => res.data);
+}
