@@ -56,3 +56,15 @@ export const miteditUser = params =>{
 export const deleteUser = params =>{
     return axios.delete(`users/${params}`).then(res => res.data);
 }
+
+
+//查询角色列表
+export const getUserRole = () =>{
+    return axios.get('roles').then(res => res.data);
+}
+
+
+//分配用户角色
+export const grandUserRole = (params) =>{
+    return axios.put(`users/${params.id}/role`,params).then(res => res.data);
+}

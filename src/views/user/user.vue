@@ -23,7 +23,7 @@
     </el-row>
 
     <!-- 表格 -->
-    <el-table :data="userData" class="margin-20" border style="width: 100%">
+    <el-table v-loading='loading' :data="userData" class="margin-20" border style="width: 100%">
       <el-table-column type="index" width="50">
       </el-table-column>
       <el-table-column prop="username" label="姓名" width="180">
@@ -43,7 +43,7 @@
         <template slot-scope="scope">
           <el-button size="mini" icon="el-icon-edit" plain type="primary" @click="openeditdlg(scope.row)"></el-button>
           <el-button size="mini" icon="el-icon-delete" plain type="danger" @click="deletedlg(scope.row)"></el-button>
-          <el-button size="mini" icon="el-icon-check" plain type="warning"></el-button>
+          <el-button size="mini" icon="el-icon-check" plain type="warning" @click="granddlg(scope.row)"></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -70,7 +70,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button @click="adduserDlgVisible = false">取 消</el-button>
         <el-button type="primary" @click="submitForm('userRuleForm')">确 定</el-button>
       </div>
     </el-dialog>
@@ -89,8 +89,32 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
+        <el-button @click="edituserDlgVisible = false">取 消</el-button>
         <el-button type="primary" @click="submitEditUser('editForm')">确 定</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- 分配用户角色对话框 -->
+    <el-dialog title="分配用户角色" :visible.sync="grandroleDlgVisible">
+      <el-form :model="grandInfo">
+        <el-form-item label="当前的用户:" label-width="120px">
+          <el-input v-model="grandInfo.username" auto-complete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="请选择角色" label-width="120px">
+          <el-select v-model="grandInfo.roleid" :placeholder="grandplaceholder">
+            <el-option 
+            v-for="(role,index) in roleList"
+            :key="index"
+            :label="role.roleName" 
+            :value="role.id"></el-option>
+
+          </el-select>
+        </el-form-item>
+          {{grandInfo.roleName}}
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="grandroleDlgVisible = false">取 消</el-button>
+        <el-button type="primary" @click="confirmgrand()">确 定</el-button>
       </div>
     </el-dialog>
 
@@ -98,7 +122,8 @@
 </template>
 
 <script>
-import { userList, userState, addUser, editUser, miteditUser, deleteUser } from '../../../api/index.js'
+import {  userList, userState, addUser, editUser, miteditUser, deleteUser,
+  getUserRole, grandUserRole} from '../../../api/index.js'
 
 export default {
   methods: {
@@ -113,11 +138,15 @@ export default {
       this.initList();
     },
     initList() {
+      this.loading = true;
       userList({ params: { query: this.query, pagenum: this.pagenum, pagesize: this.pagesize } }).then(res => {
         this.userData = res.data.users;
         this.total = res.data.total;
       })
+      this.loading = false;
     },
+
+    //修改用户状态
     changeState(row) {
       userState({ uid: row.id, type: row.mg_state }).then(res => {
         if (res.meta.status === 200) {
@@ -197,7 +226,7 @@ export default {
       }).then(() => {
         // console.log(123)
         deleteUser(row.id).then(res => {
-          console.log(res)
+          // console.log(res)
           if (res.meta.status === 200) {
             this.$message({
               type: 'success',
@@ -206,10 +235,10 @@ export default {
           }
           this.initList();
         })
-            //  this.$message({
-            //   type: 'success',
-            //   message: '删除成功!'
-            // });
+        //  this.$message({
+        //   type: 'success',
+        //   message: '删除成功!'
+        // });
 
       }).catch(() => {
         this.$message({
@@ -217,13 +246,63 @@ export default {
           message: '已取消删除'
         });
       });
-    }
+    },
 
+    //打开分配角色对话框
+    granddlg(row) {
+      this.grandroleDlgVisible = true;
+      this.grandInfo.username = row.username;
+      this.grandInfo.userid = row.id;
+      // console.log(row.id);
+
+
+      if(this.grandInfo.roleName){
+        console.log(1111)
+        console.log(this.grandInfo.roleid)
+        this.grandplaceholder = this.grandInfo.roleName;
+      }else{
+         this.grandplaceholder = '请选择角色';
+      }
+
+      getUserRole().then(res => {
+        // console.log(res)
+        if (res.meta.status === 200) {
+          this.roleList = res.data;
+      
+        }
+      })
+    },
+
+    //确定分配角色
+    confirmgrand(){
+      // console.log(this.grandInfo.roleid)
+      // console.log(this.grandInfo.userid)
+      grandUserRole({id:this.grandInfo.userid,rid:this.grandInfo.roleid }).then(res=>{
+          console.log(res)
+          if (res.meta.status === 200) {
+            this.$message({
+              type: 'success',
+              message: res.meta.msg
+            });
+          this.grandroleDlgVisible = false;
+          
+          }else{
+             this.$message({
+              type: 'error',
+              message: res.meta.msg
+            });
+            this.grandroleDlgVisible = false;
+          }
+      })
+    }
 
   },
   data() {
     return {
+      loading:false,
+      grandplaceholder:'请选择角色',
       userData: [],
+      roleList: [],
       value3: '',
       query: '',
       total: 0,
@@ -231,6 +310,7 @@ export default {
       pagenum: 1,
       adduserDlgVisible: false,
       edituserDlgVisible: false,
+      grandroleDlgVisible: false,
       userInfo: {
         username: '',
         password: '',
@@ -243,6 +323,7 @@ export default {
         mobile: '',
         id: ''
       },
+      grandInfo: {},
       rules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' }
