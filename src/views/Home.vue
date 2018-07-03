@@ -4,8 +4,15 @@
       <el-aside width="auto">
         <div class="logo"></div>
         <!-- 侧边栏 -->
-        <el-menu default-active="1" class="el-menu-admin" @open="handleOpen" @close="handleClose" background-color="#545c64"
-          text-color="#fff" active-text-color="#ffd04b" :collapse="isCollapse" :router='true'>
+        <el-menu default-active="/user" 
+        class="el-menu-admin" 
+        @open="handleOpen" 
+        @close="handleClose" 
+        background-color="#545c64" 
+        text-color="#fff" 
+        active-text-color="#ffd04b" 
+        :collapse="isCollapse" 
+        :router='true'>
           <el-submenu index="1">
             <template slot="title">
               <i class="el-icon-location"></i>
@@ -18,6 +25,19 @@
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
+
+          <el-submenu index="2">
+            <template slot="title">
+              <i class="el-icon-location"></i>
+              <span>权限管理</span>
+            </template>
+            <el-menu-item-group>
+
+              <el-menu-item index="/roles">角色列表</el-menu-item>
+              <el-menu-item index="/rights">权限列表</el-menu-item>
+            </el-menu-item-group>
+          </el-submenu>
+
         </el-menu>
       </el-aside>
 
@@ -42,13 +62,13 @@
   </div>
 </template>
 <script>
-import { userList} from '../../api/index.js'
+import { userList } from '../../api/index.js'
 
 export default {
   data() {
     return {
-        isCollapse: true,
-       
+      isCollapse: true,
+
     };
   },
   methods: {
@@ -59,17 +79,17 @@ export default {
       console.log(key, keyPath);
     },
     //隐藏显示侧边栏
-    toggleshow(){
+    toggleshow() {
       this.isCollapse = !this.isCollapse
     },
     //退出登录
-    exit(){
+    exit() {
       localStorage.removeItem('mytoken');
-      this.$router.push({name:'/login'})
+      this.$router.push({ name: '/login' })
     }
   },
-  computed:{
-  
+  computed: {
+
   },
   mounted() {
 

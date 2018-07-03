@@ -257,8 +257,8 @@ export default {
 
 
       if(this.grandInfo.roleName){
-        console.log(1111)
-        console.log(this.grandInfo.roleid)
+        // console.log(1111)
+        // console.log(this.grandInfo.roleid)
         this.grandplaceholder = this.grandInfo.roleName;
       }else{
          this.grandplaceholder = '请选择角色';
@@ -278,7 +278,7 @@ export default {
       // console.log(this.grandInfo.roleid)
       // console.log(this.grandInfo.userid)
       grandUserRole({id:this.grandInfo.userid,rid:this.grandInfo.roleid }).then(res=>{
-          console.log(res)
+          // console.log(res)
           if (res.meta.status === 200) {
             this.$message({
               type: 'success',
