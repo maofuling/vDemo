@@ -50,3 +50,9 @@ export const editUser = params =>{
 export const miteditUser = params =>{
     return axios.put(`users/${params.id}`,params).then(res => res.data);
 }
+
+
+//删除用户
+export const deleteUser = params =>{
+    return axios.delete(`users/${params}`).then(res => res.data);
+}

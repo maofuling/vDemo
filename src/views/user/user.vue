@@ -42,7 +42,7 @@
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button size="mini" icon="el-icon-edit" plain type="primary" @click="openeditdlg(scope.row)"></el-button>
-          <el-button size="mini" icon="el-icon-delete" plain type="danger"></el-button>
+          <el-button size="mini" icon="el-icon-delete" plain type="danger" @click="deletedlg(scope.row)"></el-button>
           <el-button size="mini" icon="el-icon-check" plain type="warning"></el-button>
         </template>
       </el-table-column>
@@ -98,7 +98,7 @@
 </template>
 
 <script>
-import { userList, userState, addUser, editUser, miteditUser } from '../../../api/index.js'
+import { userList, userState, addUser, editUser, miteditUser, deleteUser } from '../../../api/index.js'
 
 export default {
   methods: {
@@ -171,7 +171,7 @@ export default {
       this.$refs[editForm].validate(valide => {
         if (valide) {
           miteditUser(this.edituserInfo).then(res => {
-            console.log(res)
+            // console.log(res)
             if (res.meta.status === 200) {
               this.$message({
                 showClose: true,
@@ -186,7 +186,40 @@ export default {
 
         }
       })
+    },
+
+    //删除用户
+    deletedlg(row) {
+      this.$confirm('此操作将永久删除该用户, 是否继续?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        // console.log(123)
+        deleteUser(row.id).then(res => {
+          console.log(res)
+          if (res.meta.status === 200) {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+          }
+          this.initList();
+        })
+            //  this.$message({
+            //   type: 'success',
+            //   message: '删除成功!'
+            // });
+
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
     }
+
+
   },
   data() {
     return {
