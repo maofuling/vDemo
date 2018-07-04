@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="roles">
       <!-- 面包屑 -->
      <el-row>
       <el-col :span="24">
@@ -24,21 +24,37 @@
     style="width: 100%">
     <el-table-column type="expand">
       <template slot-scope="props">
-        <el-form label-position="left" inline class="demo-table-expand">
-          <el-form-item label="商品名称">
-            <span>展开</span>
-          </el-form-item>
-         
-        </el-form>
+        <el-row v-for="firstsons in props.row.children" :key="firstsons.id">
+          <el-col :span="4">
+            <el-tag closable>{{firstsons.authName}}</el-tag>
+             <i class="el-icon-arrow-right" v-if="firstsons.children.length !== 0"></i>
+          </el-col>
+          <el-col :span="20">
+            <el-row v-for="secondsons in firstsons.children" :key="secondsons.id">
+               <el-col :span="3">
+                 <el-tag closable type="success">{{secondsons.authName}}</el-tag>
+                  <i class="el-icon-arrow-right" v-if="secondsons.children.length !== 0"></i>
+               </el-col>
+               <el-col :span="21">
+                 <el-tag closable type="warning"
+                 v-for='thirdsons in secondsons.children' :key="thirdsons.id">
+                   {{thirdsons.authName}}
+                </el-tag>
+               </el-col>
+            </el-row>
+          </el-col>
+        </el-row>
       </template>
     </el-table-column>
     <el-table-column
       label="角色名称"
-      prop="roleName">
+      prop="roleName"
+      width='165px'>
     </el-table-column>
     <el-table-column
       label="描述"
-      prop="roleDesc">
+      prop="roleDesc"
+       width='130px'>
     </el-table-column>
     <el-table-column
       label="操作">
@@ -70,6 +86,10 @@ export default {
   }
 }
 </script>
-<style lang="css" scoped>
-  
+<style lang="scss" scoped>
+  .roles {
+    .el-tag {
+      margin-bottom: 20px;
+    }
+  }
 </style>
