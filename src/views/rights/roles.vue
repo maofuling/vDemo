@@ -26,23 +26,28 @@
       <template slot-scope="props">
         <el-row v-for="firstsons in props.row.children" :key="firstsons.id">
           <el-col :span="4">
-            <el-tag closable>{{firstsons.authName}}</el-tag>
+            <el-tag closable @close='deleteright(props.row,firstsons.id)'>{{firstsons.authName}}</el-tag>
              <i class="el-icon-arrow-right" v-if="firstsons.children.length !== 0"></i>
           </el-col>
           <el-col :span="20">
             <el-row v-for="secondsons in firstsons.children" :key="secondsons.id">
                <el-col :span="3">
-                 <el-tag closable type="success">{{secondsons.authName}}</el-tag>
+                 <el-tag closable type="success"  @close='deleteright(props.row,secondsons.id)'>{{secondsons.authName}}</el-tag>
                   <i class="el-icon-arrow-right" v-if="secondsons.children.length !== 0"></i>
                </el-col>
                <el-col :span="21">
                  <el-tag closable type="warning"
-                 v-for='thirdsons in secondsons.children' :key="thirdsons.id">
+                 v-for='thirdsons in secondsons.children' :key="thirdsons.id"
+                  @close='deleteright(props.row,thirdsons.id)'>
                    {{thirdsons.authName}}
                 </el-tag>
                </el-col>
             </el-row>
           </el-col>
+        </el-row>
+
+        <el-row v-if="props.row.children.length === 0">
+          <el-col>该角色没有分配权限，请前往分配</el-col>
         </el-row>
       </template>
     </el-table-column>
@@ -70,7 +75,7 @@
   </div>
 </template>
 <script>
-import {getUserRole} from '../../../api/index.js'
+import {getUserRole,deleteRoleRights} from '../../../api/index.js'
 
 export default {
   data() {
@@ -80,9 +85,20 @@ export default {
   },
   created(){
     getUserRole().then(res =>{
-      console.log(res)
+      // console.log(res)
       this.rolelist = res.data;
     })
+  },
+  methods: {
+    deleteright(row,RightId){
+      // console.log(RightId)
+      // console.log(row)
+
+      deleteRoleRights({roleId:row.id,rightId:RightId}).then(res=>{
+        // console.log(res)
+        row.children = res.data;
+      })
+    }
   }
 }
 </script>

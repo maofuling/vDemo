@@ -74,3 +74,8 @@ export const grandUserRole = (params) =>{
 export const getrightlist = params =>{
     return axios.get(`rights/${params}`).then(res => res.data);
 }
+
+// 删除角色指定权限
+export const deleteRoleRights = params =>{
+    return axios.delete(`roles/${params.roleId}/rights/${params.rightId}`).then(res => res.data);
+}
