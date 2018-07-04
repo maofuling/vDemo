@@ -68,3 +68,9 @@ export const getUserRole = () =>{
 export const grandUserRole = (params) =>{
     return axios.put(`users/${params.id}/role`,params).then(res => res.data);
 }
+
+
+//获取权限列表
+export const getrightlist = params =>{
+    return axios.get(`rights/${params}`).then(res => res.data);
+}

@@ -142,6 +142,7 @@ export default {
       userList({ params: { query: this.query, pagenum: this.pagenum, pagesize: this.pagesize } }).then(res => {
         this.userData = res.data.users;
         this.total = res.data.total;
+        // console.log(res)
       })
       this.loading = false;
     },
