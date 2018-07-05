@@ -4,7 +4,8 @@
       <el-aside width="auto">
         <div class="logo"></div>
         <!-- 侧边栏 -->
-        <el-menu default-active="/user" 
+        <el-menu 
+        default-active="/user" 
         class="el-menu-admin" 
         @open="handleOpen" 
         @close="handleClose" 
@@ -12,21 +13,26 @@
         text-color="#fff" 
         active-text-color="#ffd04b" 
         :collapse="isCollapse" 
-        :router='true'>
-          <el-submenu index="1">
+        :router='true'
+        >
+          <el-submenu :index="first.path"
+          v-for="first in menuData"
+          :key="first.id">
             <template slot="title">
               <i class="el-icon-location"></i>
-              <span>用户管理</span>
+              <span>{{first.authName}}</span>
             </template>
             <el-menu-item-group>
-              <el-menu-item index="/user">
+              <el-menu-item :index="second.path"
+              v-for="second in first.children"
+              :key="second.id">
                 <i class="el-icon-menu"></i>
-                <span slot="title">用户列表</span>
+                <span slot="title">{{second.authName}}</span>
               </el-menu-item>
             </el-menu-item-group>
           </el-submenu>
 
-          <el-submenu index="2">
+          <!-- <el-submenu index="2">
             <template slot="title">
               <i class="el-icon-location"></i>
               <span>权限管理</span>
@@ -36,7 +42,7 @@
               <el-menu-item index="/roles">角色列表</el-menu-item>
               <el-menu-item index="/rights">权限列表</el-menu-item>
             </el-menu-item-group>
-          </el-submenu>
+          </el-submenu> -->
 
         </el-menu>
       </el-aside>
@@ -62,12 +68,13 @@
   </div>
 </template>
 <script>
-import { userList } from '../../api/index.js'
+import { userList, menuRights } from '../../api/index.js'
 
 export default {
   data() {
     return {
       isCollapse: true,
+      menuData:[]
 
     };
   },
@@ -101,7 +108,17 @@ export default {
       }
     }
     userList(params).then(res => {
-      console.log(res)
+      // console.log(res)
+     
+    })
+  },
+  created() {
+    menuRights().then(res => {
+      if (res.meta.status === 200) {
+        console.log(res)
+         this.menuData=res.data;
+      }
+
     })
   }
 }

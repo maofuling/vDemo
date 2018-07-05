@@ -27,7 +27,7 @@ export default new Router({
             redirect:{path:'/welcome'},
             children:[
                 {name:'welcome',path:'/welcome',component:welcome},
-                {name:'user',path:'/user',component:user},
+                {name:'users',path:'/users',component:user},
                 {name:'rights',path:'/rights',component:rights},
                 {name:'roles',path:'/roles',component:roles}
             ]
